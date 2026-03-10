@@ -1,0 +1,213 @@
+# Repository Setup Guide
+
+## Initial Setup
+
+After cloning or creating from this template:
+
+### 1. Update Project Configuration
+
+**In `package.json`**:
+- Change `name` to your project name
+- Update `description`
+- Update `author`
+- Update repository URLs
+
+**In `README.md`**:
+- Update project name and description
+- Update repository URLs
+- Update contact information
+
+**In `.github/workflows/deploy.yml`**:
+- Update `SERVICE_NAME` environment variable
+- Update `GCP_PROJECT_ID` if needed
+
+### 2. Configure GitHub Repository
+
+**Add Repository Secrets**:
+
+Go to Settings → Secrets and variables → Actions → New repository secret
+
+Add these secrets:
+- `GCP_PROJECT_ID`: Your Google Cloud project ID
+- `GCP_SA_KEY`: Service account JSON key (base64 encoded)
+
+**Create Service Account**:
+```bash
+# Create service account
+gcloud iam service-accounts create github-actions \
+  --display-name="GitHub Actions Deploy"
+
+# Grant necessary permissions
+gcloud projects add-iam-policy-binding PROJECT_ID \
+  --member="serviceAccount:github-actions@PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/run.admin"
+
+gcloud projects add-iam-policy-binding PROJECT_ID \
+  --member="serviceAccount:github-actions@PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/storage.admin"
+
+gcloud projects add-iam-policy-binding PROJECT_ID \
+  --member="serviceAccount:github-actions@PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/iam.serviceAccountUser"
+
+# Create and download key
+gcloud iam service-accounts keys create key.json \
+  --iam-account=github-actions@PROJECT_ID.iam.gserviceaccount.com
+
+# Copy the contents of key.json and add to GitHub Secrets as GCP_SA_KEY
+```
+
+### 3. Set Up Google Cloud Resources
+
+**Enable Required APIs**:
+```bash
+gcloud services enable run.googleapis.com
+gcloud services enable firestore.googleapis.com
+gcloud services enable secretmanager.googleapis.com
+gcloud services enable containerregistry.googleapis.com
+```
+
+**Create Firestore Database**:
+```bash
+gcloud firestore databases create --region=us-central1
+```
+
+**Create Secrets**:
+```bash
+# JWT Secret
+echo -n "$(openssl rand -base64 32)" | gcloud secrets create jwt-secret --data-file=-
+
+# Grant Cloud Run access
+gcloud secrets add-iam-policy-binding jwt-secret \
+  --member="serviceAccount:PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
+  --role="roles/secretmanager.secretAccessor"
+```
+
+### 4. Configure Branch Protection
+
+Go to Settings → Branches → Add rule
+
+For `main` branch:
+- ✅ Require a pull request before merging
+- ✅ Require status checks to pass before merging
+  - Select: test, deploy-staging (if applicable)
+- ✅ Require conversation resolution before merging
+
+For `develop` branch:
+- ✅ Require status checks to pass before merging
+  - Select: test
+
+### 5. Local Development Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Copy environment template
+cp .env.template .env
+
+# Edit .env with your values
+# Required:
+# - GCP_PROJECT_ID
+# - JWT_SECRET (can use: openssl rand -base64 32)
+
+# Run locally
+npm run dev
+
+# Test
+curl http://localhost:8080/health
+```
+
+### 6. First Deployment
+
+**Manual Deployment**:
+```bash
+# Deploy to staging
+./scripts/deploy.sh staging
+
+# Test staging
+curl https://your-service-staging-*.run.app/health
+
+# Deploy to production
+./scripts/deploy.sh production
+```
+
+**Automatic Deployment**:
+
+Push to `develop` → Deploys to staging
+Push to `main` → Deploys to production
+
+### 7. Set Up Monitoring
+
+**Create Alert Policies**:
+
+Go to Cloud Console → Monitoring → Alerting
+
+Create alerts for:
+- Error rate > 5%
+- Response time P95 > 2s
+- Instance count > 8 (indicates scaling issues)
+
+**Set Up Log-based Metrics** (optional):
+
+```bash
+gcloud logging metrics create error_count \
+  --description="Count of errors" \
+  --log-filter='severity=ERROR'
+```
+
+### 8. Optional: Custom Domain
+
+**Map custom domain**:
+```bash
+gcloud run domain-mappings create \
+  --service SERVICE_NAME \
+  --domain api.yourdomain.com \
+  --region us-central1
+```
+
+Then add the DNS records shown in the output.
+
+## Verification Checklist
+
+After setup, verify:
+
+- [ ] Repository secrets configured in GitHub
+- [ ] GCP APIs enabled
+- [ ] Firestore database created
+- [ ] Secrets created in Secret Manager
+- [ ] Branch protection rules configured
+- [ ] Local development working
+- [ ] Staging deployment successful
+- [ ] Production deployment successful
+- [ ] Health check endpoint responding
+- [ ] CI/CD pipeline working
+- [ ] Monitoring alerts configured
+
+## Next Steps
+
+1. Start building your features
+2. Write tests
+3. Update documentation
+4. Configure custom domain (if needed)
+5. Set up monitoring dashboards
+6. Plan backup strategy
+
+## Troubleshooting
+
+**Issue**: GitHub Actions failing with "Permission denied"
+- Verify service account has correct IAM roles
+- Check GCP_SA_KEY secret is properly set
+
+**Issue**: Cloud Run deployment fails
+- Check if all required APIs are enabled
+- Verify secrets exist and have correct permissions
+
+**Issue**: Local development can't connect to Firestore
+- Ensure GCP_PROJECT_ID is set correctly
+- Check if you're authenticated: `gcloud auth application-default login`
+
+## Support
+
+- Documentation: [docs/](docs/)
+- Issues: [GitHub Issues](https://github.com/yourusername/project-name/issues)

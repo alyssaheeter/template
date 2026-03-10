@@ -1,0 +1,146 @@
+# Project Name
+
+> One-sentence description of what this project does and why it exists.
+
+## Overview
+
+Provide a clear, concise explanation of:
+- What problem this solves
+- Who this is for
+- Key capabilities
+
+## Architecture
+
+High-level system design:
+
+```
+┌─────────────────┐
+│   Component A   │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   Component B   │
+└─────────────────┘
+```
+
+See [docs/architecture.md](docs/architecture.md) for detailed system design.
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+ / Python 3.11+ / [specify runtime]
+- Google Cloud project (if applicable)
+- Required API keys or credentials
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/project-name.git
+cd project-name
+
+# Install dependencies
+npm install
+# or
+pip install -r requirements.txt --break-system-packages
+
+# Configure environment
+cp .env.template .env
+# Edit .env with your credentials
+```
+
+### Running Locally
+
+```bash
+# Development mode
+npm run dev
+# or
+python src/main.py
+```
+
+## Project Structure
+
+```
+project-root/
+├── docs/               # All documentation
+├── src/                # All production code
+├── infrastructure/     # Deployment configs
+├── scripts/            # Operational scripts
+├── tests/              # Automated tests
+├── config/             # Configuration templates
+└── .github/            # GitHub workflows
+```
+
+## Usage
+
+### Basic Example
+
+```javascript
+// Code example showing primary use case
+```
+
+### Advanced Features
+
+See [docs/usage.md](docs/usage.md) for detailed examples.
+
+## Deployment
+
+See [docs/deployment.md](docs/deployment.md) for deployment instructions.
+
+Quick deploy to Google Cloud Run:
+```bash
+./scripts/deploy.sh production
+```
+
+## Operations
+
+### Maintenance Tasks
+
+```bash
+# Common operational tasks
+npm run cleanup
+npm run migrate
+```
+
+See [docs/operations.md](docs/operations.md) for troubleshooting and maintenance.
+
+## Development
+
+### Running Tests
+
+```bash
+npm test
+# or
+pytest tests/
+```
+
+### Code Style
+
+This project uses:
+- ESLint / Prettier (JavaScript/TypeScript)
+- Black / isort (Python)
+- Conventional Commits for commit messages
+
+### Contributing
+
+1. Create a feature branch
+2. Make your changes
+3. Run tests
+4. Submit a pull request
+
+## License
+
+[MIT License](LICENSE) - or specify your license
+
+## Support
+
+- Documentation: [docs/](docs/)
+- Issues: [GitHub Issues](https://github.com/yourusername/project-name/issues)
+- Contact: your.email@example.com
+
+---
+
+**Status**: [Development | Beta | Production]  
+**Last Updated**: 2026-03-08

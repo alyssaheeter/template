@@ -1,0 +1,35 @@
+# Environment Configuration Template
+# Copy this file to .env and fill in your values
+
+# Application Settings
+NODE_ENV=development
+PORT=8080
+
+# Google Cloud Platform
+GCP_PROJECT_ID=your-project-id
+GCP_REGION=us-central1
+
+# Database (Firestore)
+FIRESTORE_DATABASE=default
+
+# Authentication
+JWT_SECRET=your-jwt-secret-key-change-this
+JWT_EXPIRES_IN=3600
+
+# External API Keys (if applicable)
+# API_KEY_1=your-api-key
+# API_KEY_2=your-api-key
+
+# Feature Flags
+# ENABLE_FEATURE_X=true
+# ENABLE_FEATURE_Y=false
+
+# Logging
+LOG_LEVEL=info
+
+# CORS Settings
+# CORS_ORIGIN=https://yourdomain.com
+
+# Rate Limiting
+# RATE_LIMIT_WINDOW=900000
+# RATE_LIMIT_MAX_REQUESTS=100
